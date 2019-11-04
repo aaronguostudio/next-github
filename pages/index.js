@@ -1,8 +1,11 @@
 import Link from 'next/link'
 import Router from 'next/router'
 import { Button } from 'antd'
+import { connect } from 'react-redux'
 
-export default () => {
+import store from '../store/store'
+
+const Index = ({ counter, username, rename, add }) => {
   function handleClick() {
     Router.push(
       {
@@ -17,7 +20,25 @@ export default () => {
 
   return (
     <>
-      <div className="test">Index</div>
+      <div className="test">{counter}</div>
+      <div className="test">{username}</div>
+      <input value={username} onChange={e => rename(e.target.value)} />
+      <Button onClick={() => add()}>Add</Button>
     </>
   )
 }
+
+const mapStateToProps = state => ({
+  counter: state.counter.count,
+  username: state.user.username
+})
+
+const mapDispatchToProps = dispatch => ({
+  add: num => dispatch({ type: 'ADD', num }),
+  rename: name => dispatch({ type: 'UPDATE_USERNAME', name })
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Index)

@@ -1,7 +1,10 @@
-import App, { Container } from 'next/app'
+import App from 'next/app'
+import { Provider } from 'react-redux'
 import 'antd/dist/antd.css'
 
 import Layout from '../components/Layout'
+
+import store from '../store/store'
 
 class MyApp extends App {
   // This will run everytime when switch page
@@ -16,11 +19,11 @@ class MyApp extends App {
     const { Component, pageProps } = this.props
 
     return (
-      <Container>
+      <Provider store={store}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </Container>
+      </Provider>
     )
   }
 }
