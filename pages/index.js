@@ -1,9 +1,14 @@
+import { useEffect } from 'react'
+import axios from 'axios'
 import Link from 'next/link'
 import Router from 'next/router'
 import { Button } from 'antd'
 import { connect } from 'react-redux'
+import getConfig from 'next/config'
 
 import { add } from '../store/store'
+
+const { publicRuntimeConfig } = getConfig()
 
 const Index = ({ counter, username, rename, add }) => {
   function handleClick() {
@@ -18,12 +23,18 @@ const Index = ({ counter, username, rename, add }) => {
     )
   }
 
+  useEffect(() => {
+    axios.get('/api/user/info')
+      .then(res => console.log('>', res))
+  }, [])
+
   return (
     <>
       <div className="test">{counter}</div>
       <div className="test">{username}</div>
       <input value={username} onChange={e => rename(e.target.value)} />
       <Button onClick={() => add()}>Add</Button>
+      <a href={publicRuntimeConfig.OAUTH_URL}>Login</a>
     </>
   )
 }
