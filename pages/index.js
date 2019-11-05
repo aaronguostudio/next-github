@@ -3,7 +3,7 @@ import Router from 'next/router'
 import { Button } from 'antd'
 import { connect } from 'react-redux'
 
-import store from '../store/store'
+import { add } from '../store/store'
 
 const Index = ({ counter, username, rename, add }) => {
   function handleClick() {
@@ -26,6 +26,11 @@ const Index = ({ counter, username, rename, add }) => {
       <Button onClick={() => add()}>Add</Button>
     </>
   )
+}
+
+Index.getInitialProps = async ({ reduxStore }) => {
+  // update store from the server
+  reduxStore.dispatch(add(100))
 }
 
 const mapStateToProps = state => ({

@@ -56,27 +56,27 @@ function addAsync(num) {
   }
 }
 
-const store = createStore(
-  allReducers,
-  Object.assign(
-    {},
-    {
-      counter: initialState,
-      user: userInitialState
-    }
-  ),
-  composeWithDevTools(applyMiddleware(thunk))
-)
 
-console.log('>store', store.getState())
-store.dispatch(addAsync(50))
-store.dispatch({ type: UPDATE_USERNAME, name: 'Xianghui Guo' })
-console.log('>store', store.getState())
+// store.dispatch(addAsync(50))
+// store.dispatch({ type: UPDATE_USERNAME, name: 'Xianghui Guo' })
 
-store.subscribe(() => {
-  console.log('>changed', store.getState())
-})
+// store.subscribe(() => {
+//   console.log('>changed', store.getState())
+// })
 
-store.dispatch({ type: ADD })
+// store.dispatch({ type: ADD })
 
-export default store
+export default function initializeStore (state) {
+  const store = createStore(
+    allReducers,
+    Object.assign({},
+      {
+        counter: initialState,
+        user: userInitialState
+      }, state
+    ),
+    composeWithDevTools(applyMiddleware(thunk))
+  )
+
+  return store
+}

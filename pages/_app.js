@@ -4,11 +4,12 @@ import 'antd/dist/antd.css'
 
 import Layout from '../components/Layout'
 
-import store from '../store/store'
+import testHoc from '../lib/with-redux'
 
 class MyApp extends App {
   // This will run everytime when switch page
-  static async getInitialProps({ Component, ctx }) {
+  static async getInitialProps(ctx) {
+    const { Component } = ctx
     const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : null
 
     return {
@@ -16,10 +17,10 @@ class MyApp extends App {
     }
   }
   render() {
-    const { Component, pageProps } = this.props
+    const { Component, pageProps, reduxStore } = this.props
 
     return (
-      <Provider store={store}>
+      <Provider store={reduxStore}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
@@ -28,4 +29,4 @@ class MyApp extends App {
   }
 }
 
-export default MyApp
+export default testHoc(MyApp)
