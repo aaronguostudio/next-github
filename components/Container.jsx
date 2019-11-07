@@ -16,6 +16,4 @@ export default ({ children, renderer = <div /> }) => {
   })
 
   return newElement
-
-  // return <Comp style={style}>{children}</Comp>
 }

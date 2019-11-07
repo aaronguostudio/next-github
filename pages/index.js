@@ -6,11 +6,9 @@ import { Button } from 'antd'
 import { connect } from 'react-redux'
 import getConfig from 'next/config'
 
-import { add } from '../store/store'
-
 const { publicRuntimeConfig } = getConfig()
 
-const Index = ({ counter, username, rename, add }) => {
+const Index = ({ counter, username, rename }) => {
   function handleClick() {
     Router.push(
       {
@@ -33,7 +31,7 @@ const Index = ({ counter, username, rename, add }) => {
       <div className="test">{counter}</div>
       <div className="test">{username}</div>
       <input value={username} onChange={e => rename(e.target.value)} />
-      <Button onClick={() => add()}>Add</Button>
+      <Button>Add</Button>
       <a href={publicRuntimeConfig.OAUTH_URL}>Login</a>
     </>
   )
@@ -41,17 +39,17 @@ const Index = ({ counter, username, rename, add }) => {
 
 Index.getInitialProps = async ({ reduxStore }) => {
   // update store from the server
-  reduxStore.dispatch(add(100))
+  // reduxStore.dispatch(add(100))
 }
 
 const mapStateToProps = state => ({
-  counter: state.counter.count,
-  username: state.user.username
+  // counter: state.counter.count,
+  // username: state.user.username
 })
 
 const mapDispatchToProps = dispatch => ({
-  add: num => dispatch({ type: 'ADD', num }),
-  rename: name => dispatch({ type: 'UPDATE_USERNAME', name })
+  // add: num => dispatch({ type: 'ADD', num }),
+  // rename: name => dispatch({ type: 'UPDATE_USERNAME', name })
 })
 
 export default connect(
