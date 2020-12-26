@@ -9,11 +9,15 @@ const auth = require('./server/auth')
 const RedisSessionStore = require('./server/session-store')
 
 const dev = process.env.NODE_ENV !== 'production'
+
+// init next middleware
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
+// init redis module
 const redis = new Redis()
 
+// make sure next is rendered
 app.prepare().then(() => {
   const server = new Koa()
   const router = new Router()
@@ -28,7 +32,7 @@ app.prepare().then(() => {
   server.use(session(SESSION_CONFIG, server))
 
   // 配置处理github OAuth的登录
-  auth(server)
+  // auth(server)
 
   router.get('/a/:id', async ctx => {
     const id = ctx.params.id
@@ -59,16 +63,17 @@ app.prepare().then(() => {
 
   server.use(router.routes())
 
+  // use next to handle requests
   server.use(async (ctx, next) => {
     ctx.req.session = ctx.session
     await handle(ctx.req, ctx.res)
     ctx.respond = false
   })
 
-  server.use(async (ctx, next) => {
-    ctx.res.statusCode = 200
-    await next()
-  })
+  // server.use(async (ctx, next) => {
+  //   ctx.res.statusCode = 200
+  //   await next()
+  // })
 
   server.listen(3000, () => {
     console.log('koa server listening on 3000')

@@ -6,7 +6,7 @@ const configs = {
   distDir: 'dest',
   // 是否给每个路由生成Etag
   generateEtags: true,
-  // 页面内容缓存配置
+  // 页面内容缓存配置, dev only
   onDemandEntries: {
     // 内容在内存中缓存的时长（ms）
     maxInactiveAge: 25 * 1000,
@@ -58,6 +58,6 @@ const SCOPE = 'user'
 module.exports = withCss({
   publicRuntimeConfig: {
     GITHUB_OAUTH_URL,
-    OAUTH_URL: `${GITHUB_OAUTH_URL}?client_id=${config.github.client_id}&scope=${SCOPE}`,
+    // OAUTH_URL: `${GITHUB_OAUTH_URL}?client_id=${config.github.client_id}&scope=${SCOPE}`,
   },
 })

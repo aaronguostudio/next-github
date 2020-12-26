@@ -6,8 +6,9 @@ import Layout from '../components/Layout'
 
 import testHoc from '../lib/with-redux'
 
+// Customize next App
 class MyApp extends App {
-  // This will run everytime when switch page
+  // This will run everytime when switch page, get global data
   static async getInitialProps(ctx) {
     const { Component } = ctx
     const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : null
@@ -16,6 +17,7 @@ class MyApp extends App {
       pageProps
     }
   }
+
   render() {
     const { Component, pageProps, reduxStore } = this.props
 

@@ -1,6 +1,7 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
+// Only run on server side
 class MyDocument extends Document {
   static async getInitialProps(ctx) {
     const originalRenderPage = ctx.renderPage
@@ -9,8 +10,8 @@ class MyDocument extends Document {
     try {
       ctx.renderPage = () =>
         originalRenderPage({
-          enhanceApp: App => props => sheet.collectStyles(<App {...props} />),
-          enhanceComponent: Component => Component
+          enhanceApp: App => props => sheet.collectStyles(<App {...props} />), // inject styled component
+          enhanceComponent: Component => Component //
         })
 
       const props = await Document.getInitialProps(ctx)
