@@ -39,8 +39,6 @@ module.exports = server => {
         console.log(userInfoRes.data)
         ctx.session.userInfo = userInfoRes.data
 
-        console.log('ctx.session <>>>>>>>>>>>', ctx.session.urlBeforeOAuth)
-
         ctx.redirect((ctx.session && ctx.session.urlBeforeOAuth) || '/')
         ctx.session.urlBeforeOAuth = null
       } else {

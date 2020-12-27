@@ -1,10 +1,8 @@
-import { useEffect } from 'react'
-import axios from 'axios'
-import Link from 'next/link'
 import Router from 'next/router'
 import { Button } from 'antd'
 import { connect } from 'react-redux'
 import getConfig from 'next/config'
+import { request } from '../lib/api'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -37,9 +35,17 @@ const Index = ({ counter, username, rename }) => {
   )
 }
 
-Index.getInitialProps = async ({ reduxStore }) => {
+Index.getInitialProps = async ({ ctx }) => {
   // update store from the server
   // reduxStore.dispatch(add(100))
+
+  const res = await request({
+    url: '/search/repositories?q=react'
+  }, ctx.req, ctx.res)
+
+  return {
+    data: res.data
+  }
 }
 
 const mapStateToProps = state => ({

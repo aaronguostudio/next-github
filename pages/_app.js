@@ -31,10 +31,10 @@ class MyApp extends App {
     Router.events.on('routeChangeComplete', this.stopLoading)
     Router.events.on('routeChangeError', this.stopLoading)
 
-    axios.get('/github/search/repositories?q=react')
-      .then(res => {
-        console.log('res', res)
-      })
+    // axios.get('/github/search/repositories?q=react')
+    //   .then(res => {
+    //     console.log('res', res)
+    //   })
   }
 
   componentWillUnmount () {
