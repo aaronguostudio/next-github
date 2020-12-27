@@ -6,7 +6,7 @@ import Container from './Container'
 const { Header, Content, Footer } = Layout
 import getConfig from 'next/config'
 import { logout } from '../store/store'
-import axios from 'axios'
+import Link from 'next/link'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -26,16 +26,20 @@ const footerStyle = {
 // styles end
 
 const MyLayout = ({ children, user, logout, router }) => {
-  const [search, setSearch] = useState('')
+  const existingQuery = router.query && router.query.query
+  const [search, setSearch] = useState(existingQuery || '')
   const handleSearchChange = useCallback(
     (event) => {
       setSearch(event.target.value)
     },
     [setSearch], // setSearch won't change after next render
   )
+
+  // it depends on the change of search
   const handleOnSearch = useCallback(() => {
-    //
-  })
+    if (!search) return
+    router.push(`/search?query=${search}`)
+  }, [search])
 
   const handleLogout = useCallback(() => {
     logout()
@@ -52,9 +56,11 @@ const MyLayout = ({ children, user, logout, router }) => {
       <Header>
         <Container renderer={<div className="header-inner" />}>
           <div className="header-left">
-            <div className="logo">
-              <Icon type="github" style={githubIconStyle} />
-            </div>
+            <Link href='/'>
+              <div className="logo">
+                <Icon type="github" style={githubIconStyle} />
+              </div>
+            </Link>
             <div>
               <Input.Search
                 value={search}

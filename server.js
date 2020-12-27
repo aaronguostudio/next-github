@@ -5,6 +5,7 @@ const session = require('koa-session')
 const Redis = require('ioredis')
 
 const auth = require('./server/auth')
+const api = require('./server/api')
 
 const RedisSessionStore = require('./server/session-store')
 
@@ -34,6 +35,7 @@ app.prepare().then(() => {
 
   // process github request
   auth(server)
+  api(server)
 
   router.get('/set/user', async ctx => {
     ctx.session.user = {
