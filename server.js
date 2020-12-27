@@ -14,7 +14,7 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-// init redis module
+// init redis client
 const redis = new Redis()
 
 // make sure next is rendered
@@ -22,17 +22,25 @@ app.prepare().then(() => {
   const server = new Koa()
   const router = new Router()
 
+  // keys for encrypt the session
   server.keys = ['Aaron Guo Learn']
   const SESSION_CONFIG = {
-    key: 'jid',
-    // maxAge: 60 * 1000,
+    key: 'id', // set the key for cookie
+    maxAge: 60 * 60 * 1000, // 1 hour
     store: new RedisSessionStore(redis),
   }
 
   server.use(session(SESSION_CONFIG, server))
 
-  // 配置处理github OAuth的登录
-  // auth(server)
+  // process github request
+  auth(server)
+
+  router.get('/set/user', async ctx => {
+    ctx.session.user = {
+      name: 'aa'
+    }
+    ctx.body = 'su'
+  })
 
   router.get('/a/:id', async ctx => {
     const id = ctx.params.id
@@ -47,7 +55,7 @@ app.prepare().then(() => {
     //     a: '1212'
     //   }
     // })
-    ctx.respond = false
+    ctx.respond = false // turn off koa internal body process, will handle manually by nextjs
   })
 
   router.get('/api/user/info', async ctx => {

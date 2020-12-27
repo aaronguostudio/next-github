@@ -1,5 +1,7 @@
+const scope = 'ssid'
+
 function getRedisEssionId (sid) {
-  return `ssid:${sid}`
+  return `${scope}:${sid}`
 }
 
 class RedisSessionStore {
@@ -7,28 +9,25 @@ class RedisSessionStore {
     this.client = client
   }
 
-  // get session data
+  // get session data from redis
   async get (sid) {
-    console.log('get s >', sid)
+    console.log('get session', sid)
     const id = getRedisEssionId(sid)
     const data = await this.client.get(id)
-    if (!data) {
-      return null
-    }
+    if (!data) return null
     try {
-      const result = JSON.parse(data)
-      return result
+      return JSON.parse(data)
     } catch (err) {
       console.error(err)
     }
   }
 
-  // set session
+  // set session from redis
   async set (sid, sess, ttl) {
-    console.log('set s >', sid)
+    console.log('set session', sid)
     const id = getRedisEssionId(sid)
     if (typeof ttl === 'number') {
-      ttl = Math.ceil(ttl / 1000)
+      ttl = Math.ceil(ttl / 1000) // parse to seconds
     }
 
     try {
@@ -43,9 +42,9 @@ class RedisSessionStore {
     }
   }
 
-  // delete session
+  // delete session from redis
   async destroy (sid) {
-    console.log('delete s >', sid)
+    console.log('delete s', sid)
     const id = getRedisEssionId(sid)
     await this.client.del(id)
   }

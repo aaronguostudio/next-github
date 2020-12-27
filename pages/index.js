@@ -21,10 +21,10 @@ const Index = ({ counter, username, rename }) => {
     )
   }
 
-  useEffect(() => {
-    axios.get('/api/user/info')
-      .then(res => console.log('>', res))
-  }, [])
+  // useEffect(() => {
+  //   axios.get('/api/user/info')
+  //     .then(res => console.log('>>>', res))
+  // }, [])
 
   return (
     <>

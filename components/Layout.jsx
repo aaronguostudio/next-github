@@ -1,34 +1,51 @@
 import { useState, useCallback } from 'react'
-import Link from 'next/link'
-import { Button, Layout, Icon, Input, Avatar } from 'antd'
-
+import { connect } from 'react-redux'
+import { withRouter} from 'next/router'
+import { Layout, Icon, Input, Avatar, Tooltip, Dropdown, Menu } from 'antd'
 import Container from './Container'
-
 const { Header, Content, Footer } = Layout
+import getConfig from 'next/config'
+import { logout } from '../store/store'
+import axios from 'axios'
 
-export default ({ children }) => {
+const { publicRuntimeConfig } = getConfig()
+
+// styles start
+// These values won't be recreated after next render
+const avatarSize = 40
+const githubIconStyle = {
+  color: 'white',
+  fontSize: 40,
+  display: 'block',
+  paddingTop: 10,
+  marginRight: 20,
+}
+const footerStyle = {
+  textAlign: 'center',
+}
+// styles end
+
+const MyLayout = ({ children, user, logout, router }) => {
   const [search, setSearch] = useState('')
   const handleSearchChange = useCallback(
-    event => {
+    (event) => {
       setSearch(event.target.value)
     },
-    [setSearch],
+    [setSearch], // setSearch won't change after next render
   )
-  const handleOnSearch = () => {
+  const handleOnSearch = useCallback(() => {
+    //
+  })
 
-  }
+  const handleLogout = useCallback(() => {
+    logout()
+  }, [logout])
 
-  const githubIconStyle = {
-    color: 'white',
-    fontSize: 40,
-    display: 'block',
-    paddingTop: 10,
-    marginRight: 20,
-  }
-
-  const footerStyle = {
-    textAlign: 'center',
-  }
+  const userDropDown = (
+    <Menu>
+      <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
+    </Menu>
+  )
 
   return (
     <Layout>
@@ -49,7 +66,19 @@ export default ({ children }) => {
           </div>
           <div className="header-right">
             <div className="user">
-              <Avatar size={40} icon="user" />
+              {
+                user && user.id ? (
+                  <Dropdown overlay={userDropDown}>
+                    <Avatar size={avatarSize} src={user.avatar_url} />
+                  </Dropdown>
+                ) : (
+                  <Tooltip title="Click to login">
+                    <a href={`/prepare-auth?url=${router.asPath}`}>
+                      <Avatar size={avatarSize} icon="user" />
+                    </a>
+                  </Tooltip>
+                )
+              }
             </div>
           </div>
         </Container>
@@ -60,6 +89,7 @@ export default ({ children }) => {
       <Footer style={footerStyle}>
         Developed by Aaron Guo
       </Footer>
+
       <style jsx>{`
         .content {
           color: red;
@@ -73,6 +103,7 @@ export default ({ children }) => {
           justify-content: flex-start;
         }
       `}</style>
+
       <style jsx global>{`
         #__next {
           height: 100%;
@@ -88,6 +119,20 @@ export default ({ children }) => {
           background: #fff;
         }
       `}</style>
+
     </Layout>
   )
 }
+
+export default connect(
+  state => {
+    return {
+      user: state.user
+    }
+  },
+  dispatch => {
+    return {
+      logout: () => dispatch(logout())
+    }
+  }
+)(withRouter(MyLayout))
