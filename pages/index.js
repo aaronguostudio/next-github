@@ -1,12 +1,40 @@
-import { Button, Icon } from 'antd'
+import { Button, Icon, Tabs } from 'antd'
+import { useEffect } from 'react'
 import { connect } from 'react-redux'
 import getConfig from 'next/config'
+import Router, { withRouter } from 'next/router'
 import { request } from '../lib/api'
 import Repo from '../components/Repo'
+import LRU from 'lru-cache'
 
 const { publicRuntimeConfig } = getConfig()
+const isServer = typeof window === 'undefined'
 
-const Index = ({ user, data }) => {
+// can also use timeout strategy
+const cache = new LRU({
+  maxAge: 1000 * 30 // miliseconds
+})
+
+// We can't cache data here in SSR, because they are stored globally
+// and will be cached by in the server side
+// let cachedRepos, cachedStars
+
+const Index = ({ user, data, router }) => {
+
+  const tabKey = router.query.key || '1'
+
+  const handleTabChange = activeKey => {
+    Router.push(`/?key=${activeKey}`)
+  }
+
+  useEffect(() => {
+    if(!isServer) {
+      data.repos && cache.set('repos', data.repos)
+      data.stars && cache.set('stars', data.stars)
+    }
+  }, [data])
+
+  // return login required
   if (!user || !user.id) {
     return (
       <>
@@ -27,7 +55,7 @@ const Index = ({ user, data }) => {
     )
   }
 
-  console.log('data>>', data)
+  // return after login
   return (
     <>
       <div className="root">
@@ -42,9 +70,18 @@ const Index = ({ user, data }) => {
           </span>
         </div>
         <div>
-          {data.repos.map(repo => (
-            <Repo repo={repo} />
-          ))}
+          <Tabs activeKey={tabKey} onChange={handleTabChange} animated={false}>
+            <Tabs.TabPane tab="Repos" key="1">
+              {data.repos.map(repo => (
+                <Repo key={repo.id} repo={repo} />
+              ))}
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Stars" key="2">
+              {data.stars.map(repo => (
+                <Repo key={repo.id} repo={repo} />
+              ))}
+            </Tabs.TabPane>
+          </Tabs>
         </div>
       </div>
       <style jsx>{`
@@ -86,6 +123,21 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
   // update store from the server
   // reduxStore.dispatch(add(100))
 
+  const user = reduxStore.getState().user
+
+  console.log('reduxStore.getState().user', reduxStore.getState().user)
+
+  if (!user || !user.id) {
+    return {}
+  }
+
+  if (!isServer && cache.get('repos') && cache.get('stars')) return {
+    data: {
+      repos: cache.get('repos'),
+      stars: cache.get('stars')
+    }
+  }
+
   const res = await request({
     url: '/user/repos'
   }, ctx.req, ctx.res)
@@ -112,7 +164,7 @@ const mapDispatchToProps = dispatch => ({
   // rename: name => dispatch({ type: 'UPDATE_USERNAME', name })
 })
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(Index)
+)(Index))
