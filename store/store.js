@@ -19,7 +19,7 @@ const allReducers = combineReducers({
   user: userReducer
 })
 
-// action creators
+// action creators start
 export function logout () {
   return (dispatch) => {
     axios.post('/logout')
@@ -31,17 +31,13 @@ export function logout () {
       })
   }
 }
+// action creators end
 
 // Make sure every request will create a new store
 export default function initializeStore (state) {
   const store = createStore(
     allReducers,
-    Object.assign(
-      {},
-      {
-        user: userInitialState
-      }, state
-    ),
+    Object.assign({}, { user: userInitialState }, state),
     composeWithDevTools(applyMiddleware(thunk))
   )
 
