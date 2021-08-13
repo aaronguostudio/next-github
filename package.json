@@ -31,7 +31,7 @@
     "koa-session": "^5.12.3",
     "lru-cache": "^6.0.0",
     "moment": "^2.24.0",
-    "next": "^9.1.2",
+    "next": "^11.1.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-redux": "^7.1.1",
